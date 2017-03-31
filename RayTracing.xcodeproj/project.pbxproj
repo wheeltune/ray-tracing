@@ -34,6 +34,7 @@
 		1B32682B1E72BB1A00B24725 /* object3D.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = object3D.h; sourceTree = "<group>"; };
 		1B32682C1E72BB4100B24725 /* objects.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = objects.h; sourceTree = "<group>"; };
 		1B32682D1E72BD2500B24725 /* geometry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = geometry.h; sourceTree = "<group>"; };
+		1B4DA51F1E8EDB3A0032FF9B /* light.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = light.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -75,6 +76,7 @@
 				1B32682B1E72BB1A00B24725 /* object3D.h */,
 				1B32682C1E72BB4100B24725 /* objects.h */,
 				1B32682D1E72BD2500B24725 /* geometry.h */,
+				1B4DA51F1E8EDB3A0032FF9B /* light.h */,
 			);
 			path = RayTracing;
 			sourceTree = "<group>";

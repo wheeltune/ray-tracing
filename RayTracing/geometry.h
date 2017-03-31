@@ -50,6 +50,7 @@ namespace Geometry {
         Point3D* points;
         int cnt;
         
+        ~Polygon3D();
         Polygon3D() { }
         Polygon3D(Point3D* points, int cnt);
         
@@ -62,10 +63,14 @@ namespace Geometry {
         Triangle3D(Point3D points[3]);
     };
     
-    // Constructors
+    // Constructors/Destructors
     Point3D::Point3D(long double x, long double y, long double z) : x(x), y(y), z(z) { }
     
     Sphere3D::Sphere3D(Point3D center, long double r) : center(center), r(r) { }
+    
+    Polygon3D::~Polygon3D() {
+        delete[] this->points;
+    }
     
     Polygon3D::Polygon3D(Point3D* points, int cnt) : cnt(cnt) {
         this->points = new Point3D[cnt];
@@ -173,6 +178,10 @@ namespace Geometry {
         return a > 0 ? 1 : -1;
     }
     
+    long double cos(const Point3D& p1, const Point3D& p2) {
+        return (p1 * p2) / p1.len() / p2.len();
+    }
+    
     bool areEqual(long double x, long double y) {
         return sign(x - y) == 0;
     }
@@ -254,17 +263,18 @@ namespace Geometry {
             return true;  // p is polygon[0]
         }
         
-        // process all points except polygon[cntPoints - 1]
+        // process all points
         for (int i = 0; i < polygon.cnt; ++i) {
             if (isOnRay(polygon[i], p, p2)) {
                 if (isOnRay(polygon[i + 1], p, p2)) {
                     crossCnt++;
                 } else {
-                    if (doesSegmentIntersectRay(polygon[i - 1], polygon[i + 1], p, p2)) {
+                    if (doesSegmentIntersectLine(polygon[i - 1], polygon[i + 1], p, p2)) {
                         crossCnt++;
                     }
                 }
-            } else if (!isOnRay(polygon[i + 1], p, p2) && doesSegmentIntersectRay(polygon[i], polygon[i + 1], p, p2)) {
+            } else if (!isOnRay(polygon[i + 1], p, p2) &&
+                       doesSegmentIntersectRay(polygon[i], polygon[i + 1], p, p2)) {
                 crossCnt++;
             }
         }
@@ -284,45 +294,6 @@ namespace Geometry {
         Point3D n = Point3D(*this);
         return n / n.len();
     }
-    
-//    bool isPointInPolygon(const Point3D& p, const Point3D* polygon, int cnt) {
-//        int crossCnt = 0;
-//        
-//        Point3D* advPolygon = new Point3D[cnt + 2];
-//        advPolygon[0] = polygon[cnt - 1];
-//        for (int i = 0; i < cnt; ++i) {
-//            advPolygon[i + 1] = polygon[i];
-//        }
-//        advPolygon[cnt + 1] = polygon[0];
-//        
-//        Point3D secondPoint = polygon[0];
-//        
-//        if (areEqual(p, secondPoint)) {
-//            return true;
-//        }
-//        
-//        for(int i = 1; i < cnt + 1; ++i) {
-//            if (doesSegmentIntersectRay(advPolygon[i], advPolygon[i + 1], p, secondPoint)) {
-//                if (isOnLine(advPolygon[i], p, secondPoint)) {
-//                    if (isOnLine(advPolygon[i + 1], p, secondPoint)) {
-//                        crossCnt++;
-//                    } else {
-//                        if (doesSegmentIntersectLine(advPolygon[i - 1], advPolygon[i + 1], p, secondPoint)) {
-//                            crossCnt++;
-//                        }
-//                    }
-//                } else if (isOnLine(advPolygon[i + 1], p, secondPoint)) {
-//                    continue;
-//                } else {
-//                    crossCnt++;
-//                }
-//            }
-//        }
-//        
-//        delete[] advPolygon;
-//        
-//        return crossCnt % 2 != 0;
-//    }
 }
 
 #endif /* geometry_h */

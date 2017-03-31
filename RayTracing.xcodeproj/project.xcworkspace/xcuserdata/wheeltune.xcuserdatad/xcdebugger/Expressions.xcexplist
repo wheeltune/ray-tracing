@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VariablesViewState
+   version = "1.0">
+   <ContextStates>
+      <ContextState
+         contextName = "Geometry::isPointInPolygon(Geometry::Point3D const&amp;, Geometry::Polygon3D const&amp;):geometry.h">
+         <PersistentStrings>
+            <PersistentString
+               value = "polygon.points+3">
+            </PersistentString>
+            <PersistentString
+               value = "polygon.points+1">
+            </PersistentString>
+            <PersistentString
+               value = "crossCnt">
+            </PersistentString>
+            <PersistentString
+               value = "polygon.points">
+            </PersistentString>
+            <PersistentString
+               value = "polygon.points+2">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+   </ContextStates>
+</VariablesViewState>

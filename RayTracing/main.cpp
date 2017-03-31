@@ -72,36 +72,37 @@ int main(int argc, const char * argv[]) {
                                    )
                         );
     
-    rayTracer.addObject(new Polygon(
+    rayTracer.addObject(new Quadrangle(
                                     (Point3D[4]){ Point3D(-500, -400, 0), Point3D(-500, -400, 1000), Point3D(-500, 400, 1000), Point3D(-500, 400, 0) },
-                                    4,
                                     SDL_Color{42, 187, 155, 255}
                                     )
                         );
-    rayTracer.addObject(new Polygon(
-                                    (Point3D[4]){ Point3D(500, -400, 0), Point3D(500, -400, 1000), Point3D(500, 400, 1000), Point3D(500, 400, 0) },
-                                    4,
+    rayTracer.addObject(new Quadrangle(
+                                    (Point3D[4]){ Point3D(500, -400, 0),
+                                                  Point3D(500, -400, 1000),
+                                                  Point3D(500, 400, 1000),
+                                                  Point3D(500, 400, 0) },
                                     SDL_Color{42, 187, 155, 255}
                                     )
                         );
-    rayTracer.addObject(new Polygon(
+    rayTracer.addObject(new Quadrangle(
                                     (Point3D[4]){ Point3D(-500, -400, 1000), Point3D(500, -400, 1000), Point3D(500, 400, 1000), Point3D(-500, 400, 1000) },
-                                    4,
                                     SDL_Color{42, 187, 155, 255}
                                     )
                         );
-    rayTracer.addObject(new Polygon(
+    rayTracer.addObject(new Quadrangle(
                                     (Point3D[4]){ Point3D(-500, -400, 0), Point3D(-500, -400, 1000), Point3D(500, -400, 1000), Point3D(500, -400, 0) },
-                                    4,
                                     SDL_Color{242, 241, 239, 255}
                                     )
                         );
-    rayTracer.addObject(new Polygon(
+    rayTracer.addObject(new Quadrangle(
                                     (Point3D[4]){ Point3D(-500, 400, 0), Point3D(-500, 400, 1000), Point3D(500, 400, 1000), Point3D(500, 400, 0) },
-                                    4,
                                     SDL_Color{202, 105, 36, 255}
                                     )
                         );
+    
+    rayTracer.addLight(new DotLight(Point3D(0, -350, 250), 1000000));
+    rayTracer.addLight(new DotLight(Point3D(0, -350, 750), 1000000));
     
     rayTracer.draw();
     

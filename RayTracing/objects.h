@@ -16,11 +16,10 @@ using namespace Geometry;
 
 class Sphere : public Object3D {
 public:
-    Sphere(Point3D center, int r, SDL_Color color) : center_(center), r_(r), color_(color) { }
+    Sphere(Point3D center, int r, SDL_Color color) : Object3D(color), center_(center), r_(r) { }
     
-    bool isCross(Point3D start, Point3D finish, Point3D* crossPoint, SDL_Color* crossColor) {
+    virtual bool intersect(Point3D start, Point3D finish, Point3D* crossPoint) {
         Point3D guide = finish - start;
-        *crossColor = color_;
         
         long double d2 = ((start - center_) ^ guide).len2() / guide.len2();
         if (d2 > r_ * r_) {
@@ -39,31 +38,24 @@ public:
         
         return true;
     }
+    
+    virtual Point3D getNormal(const Point3D& point) {
+        return (point - center_).normalize();
+    }
 private:
     Point3D center_;
     int r_;
-    SDL_Color color_;
 };
 
 class Polygon : public Object3D {
 public:
-    Polygon(Point3D* points, int cnt, SDL_Color color) : cnt_(cnt), color_(color) {
-        points_ = new Point3D[cnt];
-        for (int i = 0; i < cnt; ++i) {
-            points_[i] = points[i];
-        }
-    }
+    Polygon(Point3D* points, int cnt, SDL_Color color) : Object3D(color), polygon_(points, cnt) { }
     
-    ~Polygon() {
-        delete[] points_;
-    }
-    
-    bool isCross(Point3D start, Point3D finish, Point3D* crossPoint, SDL_Color* crossColor) {
+    virtual bool intersect(Point3D start, Point3D finish, Point3D* crossPoint) {
         Point3D guide = finish - start;
-        *crossColor = color_;
         
-        Point3D norm = (points_[1] - points_[0]) ^ (points_[2] - points_[0]); // Normal to the plane
-        long double d = norm * (points_[0] - start);
+        Point3D norm = getNormal(); // Normal to the plane
+        long double d = norm * (polygon_[0] - start);
         long double e = norm * guide;
         
         if (!isZero(e)) {
@@ -71,30 +63,39 @@ public:
                 // line on plane
                 return true;
             }
+            if (sign(d) != sign(e)) {
+                return false;
+            }
             
             // Let's find cross point then
             *crossPoint = start + guide * (d / e);
             
-            return isPointInPolygon(*crossPoint, Polygon3D(points_, cnt_));
+            return isPointInPolygon(*crossPoint, polygon_);
         }
         return false;
     }
+    
+    virtual Point3D getNormal(const Point3D& point) {
+        return getNormal();
+    }
 protected:
-    Point3D* points_;
-    int cnt_;
+    Polygon3D polygon_;
     SDL_Color color_;
+    
+    Point3D getNormal() {
+        return ((polygon_[1] - polygon_[0]) ^ (polygon_[2] - polygon_[0])).normalize();
+    }
 };
 
 class Triangle : public Polygon {
 public:
     Triangle(Point3D points[3], SDL_Color color) : Polygon(points, 3, color) { }
     
-    bool isCross(Point3D start, Point3D finish, Point3D* crossPoint, SDL_Color* crossColor) {
+    virtual bool intersect(Point3D start, Point3D finish, Point3D* crossPoint) {
         Point3D guide = finish - start;
-        *crossColor = color_;
         
-        Point3D norm = (points_[1] - points_[0]) ^ (points_[2] - points_[0]); // Normal to the plane
-        long double d = norm * (points_[0] - start);
+        Point3D norm = (polygon_[1] - polygon_[1]) ^ (polygon_[1] - polygon_[1]); // Normal to the plane
+        long double d = norm * (polygon_[1] - start);
         long double e = norm * guide;
         
         if (!isZero(e)) {
@@ -108,9 +109,9 @@ public:
             
             // Find normals
             Point3D norm[3] = {
-                (points_[0] - *crossPoint) ^ (points_[1] - *crossPoint),
-                (points_[1] - *crossPoint) ^ (points_[2] - *crossPoint),
-                (points_[2] - *crossPoint) ^ (points_[0] - *crossPoint)
+                (polygon_[1] - *crossPoint) ^ (polygon_[1] - *crossPoint),
+                (polygon_[1] - *crossPoint) ^ (polygon_[1] - *crossPoint),
+                (polygon_[1] - *crossPoint) ^ (polygon_[1] - *crossPoint)
             };
             
             // If they have same orientation
