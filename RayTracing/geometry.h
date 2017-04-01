@@ -16,6 +16,7 @@
 namespace Geometry {
     
     // Constants
+    const long double PI = std::atan2(0, -1);
     const long double EPS = 1e-10;
     
     // Structs

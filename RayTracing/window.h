@@ -8,6 +8,7 @@
 
 #ifndef Window_h
 #define Window_h
+#include <cmath>
 #include <SDL2/sdl.h>
 #include "geometry.h"
 
@@ -66,12 +67,15 @@ public:
         window_ = NULL;
     }
     
-    Point3D getPixelPoint(int x, int y) {
+    void getPixelPoints(int x, int y, Point3D* points, int allias) {
         int width = getPixelWidth(), height = getPixelHeight();
-        Point3D top = (leftTop_ * (width - x) + rightTop_ * x) / width;
-        Point3D bottom = (leftBottom_ * (width - x) + rightBottom_ * x) / width;
-        
-        return (top * (height - y) + bottom * y) / height;
+        Point3D xBase = (rightTop_ - leftTop_)   / width / 2;
+        Point3D yBase = (leftBottom_ - leftTop_) / height / 2;
+    
+        points[0] = leftTop_ + xBase * (2 * x + 1) + yBase * (2 * y + 1);
+        for (int i = 1; i < allias; ++i) {
+            points[i] = points[0] + xBase * std::cos(2 * PI * i / allias) + yBase * std::sin(2 * PI * i / allias);
+        }
     }
     
     int getPixelWidth() {
