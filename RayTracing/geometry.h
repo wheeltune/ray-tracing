@@ -12,6 +12,7 @@
 #include <cmath>
 #include <iostream>
 #include <algorithm>
+#include <SDL2/sdl.h>
 
 namespace Geometry {
     
@@ -20,13 +21,53 @@ namespace Geometry {
     const long double EPS = 1e-10;
     
     // Structs
+    struct Vec3 {
+        long double vec[3];
+        
+        Vec3() { }
+        Vec3(long double v1, long double v2, long double v3);
+        
+        Vec3 limit(long double down, long double up);
+        
+        long double& operator[] (int index);
+        const long double operator[]  (int index) const;
+        
+        Vec3& operator +=(const Vec3& v);
+        Vec3& operator *=(const Vec3& v);
+        Vec3& operator -=(const Vec3& v);
+        Vec3& operator /=(const Vec3& v);
+        
+        Vec3 operator -();
+        Vec3 operator +();
+        
+        Vec3& operator *=(float k);
+        Vec3& operator /=(float k);
+    };
+    
+    struct RGBA {
+        double r, g, b, a;
+        
+        RGBA(double r, double g, double b, double a);
+        RGBA(SDL_Color c);
+    
+        SDL_Color toSDL() {
+            return SDL_Color{static_cast<Uint8>(r * 255),
+                             static_cast<Uint8>(g * 255),
+                             static_cast<Uint8>(b * 255),
+                             static_cast<Uint8>(a * 255)};
+        }
+        
+        RGBA& operator +=(const RGBA& c);
+        RGBA& operator *=(double a);
+    };
+    
     struct Point3D {
         long double x, y, z;
         
         Point3D() {}
         Point3D(long double x, long double y, long double z);
         
-        Point3D normalize();
+        Point3D normalize() const;
         
         long double len2() const;
         long double len()  const;
@@ -34,6 +75,9 @@ namespace Geometry {
         Point3D& operator +=(const Point3D& p);
         Point3D& operator -=(const Point3D& p);
         Point3D& operator ^=(const Point3D& p);
+        
+        Point3D operator -();
+        Point3D operator +();
         
         Point3D& operator *=(long double a);
         Point3D& operator /=(long double a);
@@ -65,6 +109,16 @@ namespace Geometry {
     };
     
     // Constructors/Destructors
+    Vec3::Vec3(long double v1, long double v2, long double v3) {
+        vec[0] = v1;
+        vec[1] = v2;
+        vec[2] = v3;
+    }
+    
+    RGBA::RGBA(double r, double g, double b, double a) : r(r), g(g), b(b), a(a) { }
+    
+    RGBA::RGBA(SDL_Color c) : r(1 / 255 * c.r), g(1 / 255 * c.g), b(1 / 255 * c.b), a(1 / 255 * c.a) { }
+    
     Point3D::Point3D(long double x, long double y, long double z) : x(x), y(y), z(z) { }
     
     Sphere3D::Sphere3D(Point3D center, long double r) : center(center), r(r) { }
@@ -81,6 +135,113 @@ namespace Geometry {
     Triangle3D::Triangle3D(Point3D points[3]) : Polygon3D(points, 3) { }
     
     // Operators
+    long double& Vec3::operator[] (int index) {
+        return vec[index];
+    }
+    
+    const long double Vec3::operator[] (int index) const {
+        return vec[index];
+    }
+    Vec3& Vec3::operator+=(const Vec3& v) {
+        for (int i = 0; i < 3; ++i)
+            (*this)[i] += v[i];
+        return *this;
+    }
+    
+    Vec3& Vec3::operator-=(const Vec3& v) {
+        for (int i = 0; i < 3; ++i)
+            (*this)[i] -= v[i];
+        return *this;
+    }
+    
+    Vec3& Vec3::operator*=(float k) {
+        for (int i = 0; i < 3; ++i)
+            (*this)[i] *= k;
+        return *this;
+    }
+    
+    Vec3& Vec3::operator*=(const Vec3& v) {
+        for (int i = 0; i < 3; ++i)
+            (*this)[i] *= v[i];
+        return *this;
+    }
+    
+    Vec3& Vec3::operator/=(float k) {
+        for (int i = 0; i < 3; ++i)
+            (*this)[i] /= k;
+        return *this;
+    }
+    
+    Vec3& Vec3::operator/=(const Vec3& v) {
+        for (int i = 0; i < 3; ++i)
+            (*this)[i] /= v[i];
+        return *this;
+    }
+    
+    Vec3 operator +(Vec3 p1, const Vec3& p2) {
+        return p1 += p2;
+    }
+    
+    Vec3 operator -(Vec3 p1, const Vec3& p2) {
+        return p1 -= p2;
+    }
+    
+    Vec3 operator *(Vec3 p1, const Vec3& p2) {
+        return p1 *= p2;
+    }
+    
+    Vec3 operator *(Vec3 p, float a) {
+        return p *= a;
+    }
+    
+    Vec3 operator *(float a, Vec3 p) {
+        return p *= a;
+    }
+    
+    Vec3 operator /(Vec3 p1, const Vec3& p2) {
+        return p1 /= p2;
+    }
+    
+    Vec3 operator /(Vec3 p, float a) {
+        return p /= a;
+    }
+    
+    Vec3 Vec3::operator -() {
+        return Vec3(*this) * (-1);
+    }
+    
+    Vec3 Vec3::operator+() {
+        return Vec3(*this);
+    }
+    
+    RGBA& RGBA::operator+=(const RGBA& c) {
+        this->r += c.r;
+        this->g += c.g;
+        this->b += c.b;
+        this->a += c.a;
+        return *this;
+    }
+    
+    RGBA& RGBA::operator*=(double a) {
+        this->r = a * this->r;
+        this->g = a * this->g;
+        this->b = a * this->b;
+        this->a = a * this->a;
+        return *this;
+    }
+    
+    RGBA operator +(const RGBA& c1, const RGBA& c2) {
+        return RGBA(c1) += c2;
+    }
+    
+    RGBA operator *(const RGBA& c, double a) {
+        return RGBA(c) *= a;
+    }
+    
+    RGBA operator *(double a, const RGBA& c) {
+        return RGBA(c) *= a;
+    }
+    
     Point3D& Point3D::operator +=(const Point3D& p) {
         this->x += p.x;
         this->y += p.y;
@@ -119,32 +280,36 @@ namespace Geometry {
         return *this;
     }
     
-    Point3D operator +(const Point3D& p1, const Point3D& p2) {
-        return Point3D(p1) += p2;
+    Point3D operator +(Point3D p1, const Point3D& p2) {
+        return p1 += p2;
     }
     
-    Point3D operator -(const Point3D& p1, const Point3D& p2) {
-        return Point3D(p1) -= p2;
+    Point3D operator -(Point3D p1, const Point3D& p2) {
+        return p1 -= p2;
     }
     
-    Point3D operator ^(const Point3D& p1, const Point3D& p2) {
-        return Point3D(p1) ^= p2;
+    Point3D operator ^(Point3D p1, const Point3D& p2) {
+        return p1 ^= p2;
     }
     
-    Point3D operator *(const Point3D& p, const long double a) {
-        return Point3D(p) *= a;
+    Point3D operator *(Point3D p, long double a) {
+        return p *= a;
     }
     
-    Point3D operator *(const long double a, const Point3D& p) {
-        return Point3D(p) *= a;
+    Point3D operator *(long double a, Point3D p) {
+        return p *= a;
     }
     
-    Point3D operator /(const Point3D& p, const long double a) {
-        return Point3D(p) /= a;
+    Point3D operator /(Point3D p, long double a) {
+        return p /= a;
     }
     
-    Point3D operator /(const long double a, const Point3D& p) {
-        return Point3D(p) /= a;
+    Point3D Point3D::operator -() {
+        return Point3D(*this) * (-1);
+    }
+    
+    Point3D Point3D::operator+() {
+        return Point3D(*this);
     }
     
     long double operator *(const Point3D& p1, const Point3D& p2) {
@@ -282,7 +447,22 @@ namespace Geometry {
         return crossCnt % 2 != 0;
     }
     
+    SDL_Color makeRGBA(Vec3 color) {
+        return SDL_Color{static_cast<Uint8>(std::min((long double) 1, color[0]) * 255),
+                         static_cast<Uint8>(std::min((long double) 1, color[1]) * 255),
+                         static_cast<Uint8>(std::min((long double) 1, color[2]) * 255),
+                         255};
+    }
+    
     // Methods
+    Vec3 Vec3::limit(long double down, long double up) {
+        Vec3 ans;
+        for (int i = 0; i < 3; ++i) {
+            ans[i] = std::max(std::min(vec[i], up), down);
+        }
+        return ans;
+    }
+    
     long double Point3D::len2() const {
         return x * x + y * y + z * z;
     }
@@ -291,9 +471,15 @@ namespace Geometry {
         return sqrt(len2());
     }
     
-    Point3D Point3D::normalize() {
+    Point3D Point3D::normalize() const {
         Point3D n = Point3D(*this);
         return n / n.len();
+    }
+    
+    Point3D reflect(Point3D v1, Point3D v2) {
+        v1 = v1.normalize();
+        v2 = v2.normalize();
+        return 2 * v1 * (v1 * v2) - v2;
     }
 }
 

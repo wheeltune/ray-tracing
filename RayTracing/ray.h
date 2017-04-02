@@ -10,10 +10,11 @@
 #define scene_h
 
 #include <iostream>
+#include <algorithm>
+#include <cmath>
 #include <vector>
 #include "window.h"
 #include "objects.h"
-#include "light.h"
 
 using namespace Geometry;
 
@@ -48,47 +49,38 @@ public:
     void draw() {
         window_.begin();
         
-        int allias = 9;
+        int allias = 1;
         Point3D* rays = new Point3D[allias];
 
         for (int w = 0; w < window_.getPixelWidth(); ++w) {
             for (int h = 0; h < window_.getPixelHeight(); ++h) {
                 Object3D* crossObject;
                 Point3D crossPoint;
-                int r = 0, g = 0, b = 0;
+                Vec3 color = Vec3(0, 0, 0);
                 
                 window_.getPixelPoints(w, h, rays, allias);
                 for (int i = 0; i < allias; ++i) {
                     if (traceRay(origin_, rays[i], &crossObject, &crossPoint)) {
-                        long double lightEnergy = 2;
+                        
+                        Vec3 lightEnergy = crossObject->getBaseIntencity(Vec3(0.9, 0.9, 0.9));
                         
                         for (auto light : lights_) {
                             Object3D* tmpObject;
                             Point3D tmpPoint;
                             if (traceRay(light->getPosition(), crossPoint, &tmpObject, &tmpPoint)) {
                                 if (areEqual(crossPoint, tmpPoint)) {
-                                    //                                visible = true;
-                                    Point3D guide = light->getPosition() - crossPoint;
-                                    Point3D norm = crossObject->getNormal(crossPoint);
-                                    long double cosAlpha = std::abs(cos(guide, norm));
-                                    lightEnergy += light->getIntensity() / guide.len2() * cosAlpha;
+                                    lightEnergy += crossObject->getLightIntencity(crossPoint, origin_, light->getPosition(), *light);;
                                 }
                             }
                         }
                         
-                        lightEnergy = 1 - 1 / lightEnergy;
-                        SDL_Color objColor = crossObject->getColor(crossPoint);
-                        r += objColor.r * lightEnergy;
-                        g += objColor.g * lightEnergy;
-                        b += objColor.b * lightEnergy;
+                        color += lightEnergy.limit(0, 1);
                     }
                 }
                 
-                r /= allias;
-                g /= allias;
-                b /= allias;
+                color /= allias;
                 
-                window_.setPixelColor(w, h, SDL_Color{static_cast<Uint8>(r), static_cast<Uint8>(g), static_cast<Uint8>(b), 255});
+                window_.setPixelColor(w, h, makeRGBA(color));
             }
         }
         

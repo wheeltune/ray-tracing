@@ -32,7 +32,7 @@ int main(int argc, const char * argv[]) {
     rayTracer.addObject(new Sphere(
                                    Point3D(400, 300, 900),
                                    200,
-                                   SDL_Color{65, 105, 237, 255}
+                                   Material(Vec3(0.25, 0.41, 0.93), Vec3(0.5, 0.5, 0.5), Vec3(1, 1, 1), 1)
                                    )
                         );
     
@@ -40,41 +40,41 @@ int main(int argc, const char * argv[]) {
     rayTracer.addObject(new Sphere(
                                    Point3D(0, 0, 500),
                                    100,
-                                   SDL_Color{255, 140, 0, 255}
+                                   Material(Vec3(1, 0.55, 0), Vec3(0.5, 0.5, 0.5), Vec3(1, 1, 1), 1)
                                    )
                         );
     
     rayTracer.addObject(new Sphere(
                                    Point3D(-100, 0, 500),
                                    100,
-                                   SDL_Color{220, 20, 0, 255}
+                                   Material(Vec3(0.86, 0.08, 0), Vec3(0.5, 0.5, 0.5), Vec3(1, 1, 1), 1)
                                    )
                         );
     
     rayTracer.addObject(new Sphere(
                                    Point3D(100, 0, 500),
                                    100,
-                                   SDL_Color{255, 215, 0, 255}
+                                   Material(Vec3(1, 0.84, 0), Vec3(0.5, 0.5, 0.5), Vec3(1, 1, 1), 1)
                                    )
                         );
     
     rayTracer.addObject(new Sphere(
                                    Point3D(-50, 100, 500),
                                    100,
-                                   SDL_Color{50, 205, 50, 255}
+                                   Material(Vec3(0.2, 0.8, 0.2), Vec3(0.5, 0.5, 0.5), Vec3(1, 1, 1), 1)
                                    )
                         );
     
     rayTracer.addObject(new Sphere(
                                    Point3D(50, 100, 500),
                                    100,
-                                   SDL_Color{0, 191, 255, 255}
+                                   Material(Vec3(0, 0.75, 1), Vec3(0.5, 0.5, 0.5), Vec3(1, 1, 1), 1)
                                    )
                         );
     
     rayTracer.addObject(new Quadrangle(
                                     (Point3D[4]){ Point3D(-500, -400, 0), Point3D(-500, -400, 1000), Point3D(-500, 400, 1000), Point3D(-500, 400, 0) },
-                                    SDL_Color{42, 187, 155, 255}
+                                    Material(Vec3(0.16, 0.73, 0.6), Vec3(0.2, 0.2, 0.2), Vec3(1, 1, 1))
                                     )
                         );
     rayTracer.addObject(new Quadrangle(
@@ -82,27 +82,27 @@ int main(int argc, const char * argv[]) {
                                                   Point3D(500, -400, 1000),
                                                   Point3D(500, 400, 1000),
                                                   Point3D(500, 400, 0) },
-                                    SDL_Color{42, 187, 155, 255}
+                                    Material(Vec3(0.16, 0.73, 0.6), Vec3(0.2, 0.2, 0.2), Vec3(1, 1, 1))
                                     )
                         );
     rayTracer.addObject(new Quadrangle(
                                     (Point3D[4]){ Point3D(-500, -400, 1000), Point3D(500, -400, 1000), Point3D(500, 400, 1000), Point3D(-500, 400, 1000) },
-                                    SDL_Color{42, 187, 155, 255}
+                                    Material(Vec3(0.16, 0.73, 0.6), Vec3(0.2, 0.2, 0.2), Vec3(1, 1, 1))
                                     )
                         );
     rayTracer.addObject(new Quadrangle(
                                     (Point3D[4]){ Point3D(-500, -400, 0), Point3D(-500, -400, 1000), Point3D(500, -400, 1000), Point3D(500, -400, 0) },
-                                    SDL_Color{242, 241, 239, 255}
+                                    Material(Vec3(0.95, 0.94, 0.94), Vec3(0.01, 0.01, 0.01), Vec3(1, 1, 1))
                                     )
                         );
     rayTracer.addObject(new Quadrangle(
                                     (Point3D[4]){ Point3D(-500, 400, 0), Point3D(-500, 400, 1000), Point3D(500, 400, 1000), Point3D(500, 400, 0) },
-                                    SDL_Color{202, 105, 36, 255}
+                                    Material(Vec3(0.79, 0.41, 0.14), Vec3(0.1, 0.1, 0.1), Vec3(1, 1, 1))
                                     )
                         );
     
-    rayTracer.addLight(new DotLight(Point3D(0, -350, 250), 1000000));
-    rayTracer.addLight(new DotLight(Point3D(0, -350, 750), 1000000));
+    rayTracer.addLight(new DotLight(Point3D(0, -350, 250), LightParams(1000, 130000, 0)));
+    rayTracer.addLight(new DotLight(Point3D(0, -200, 600), LightParams(0, 130000, 0)));
     
     rayTracer.draw();
     

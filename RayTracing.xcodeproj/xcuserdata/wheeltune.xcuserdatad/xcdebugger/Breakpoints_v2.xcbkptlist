@@ -72,13 +72,13 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "RayTracing/geometry.h"
-            timestampString = "512698534.962679"
+            timestampString = "512858913.252039"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "259"
-            endingLineNumber = "259"
-            landmarkName = "isPointInPolygon(const Point3D&amp; p, const Polygon3D&amp; polygon)"
-            landmarkType = "9">
+            startingLineNumber = "267"
+            endingLineNumber = "267"
+            landmarkName = "Point3D::operator ^=(const Point3D&amp; p)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -88,7 +88,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "RayTracing/ray.h"
-            timestampString = "512698655.087092"
+            timestampString = "512865001.6543"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "101"
@@ -104,12 +104,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "RayTracing/ray.h"
-            timestampString = "512698655.087092"
+            timestampString = "512865001.6543"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "111"
             endingLineNumber = "111"
-            landmarkName = "traceRay(const Point3D&amp; start, const Point3D&amp; finish, Object3D** crossObject, Point3D* crossPoint)"
+            landmarkName = "flush()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -120,12 +120,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "RayTracing/ray.h"
-            timestampString = "512698655.087092"
+            timestampString = "512865001.6543"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "111"
             endingLineNumber = "111"
-            landmarkName = "traceRay(const Point3D&amp; start, const Point3D&amp; finish, Object3D** crossObject, Point3D* crossPoint)"
+            landmarkName = "flush()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -152,7 +152,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "RayTracing/ray.h"
-            timestampString = "512698655.087092"
+            timestampString = "512865001.6543"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "104"
@@ -174,6 +174,38 @@
             startingLineNumber = "73"
             endingLineNumber = "73"
             landmarkName = "getPixelPoints(int x, int y, Point3D* points, int allias)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "RayTracing/geometry.h"
+            timestampString = "512858913.252039"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "356"
+            endingLineNumber = "356"
+            landmarkName = "areEqual(const Point3D&amp; p1, const Point3D&amp; p2)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "RayTracing/object3D.h"
+            timestampString = "512864134.720443"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "83"
+            endingLineNumber = "83"
+            landmarkName = "getLightIntencity(const Point3D&amp; point, const Point3D&amp; origin, const Point3D&amp; light, const LightParams&amp; lightParams)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

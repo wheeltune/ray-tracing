@@ -9,14 +9,15 @@
 #ifndef objects_h
 #define objects_h
 
-#include "Object3D.h"
+#include "object3D.h"
 #include "geometry.h"
+#include <assert.h>
 
 using namespace Geometry;
 
 class Sphere : public Object3D {
 public:
-    Sphere(Point3D center, int r, SDL_Color color) : Object3D(color), center_(center), r_(r) { }
+    Sphere(Point3D center, int r, Material material) : Object3D(material), center_(center), r_(r) { }
     
     virtual bool intersect(Point3D start, Point3D finish, Point3D* crossPoint) {
         Point3D guide = finish - start;
@@ -49,9 +50,15 @@ private:
 
 class Polygon : public Object3D {
 public:
-    Polygon(Point3D* points, int cnt, SDL_Color color) : Object3D(color), polygon_(points, cnt) { }
+    Polygon(Point3D* points, int cnt, Material material, Point3D orientation) : Object3D(material),
+                                                                                polygon_(points, cnt),
+                                                                                orientation_(orientation) { }
+    
+    Polygon(Point3D* points, int cnt, Material material) : Polygon(points, cnt, material, Point3D(0, 0, 0)) { }
     
     virtual bool intersect(Point3D start, Point3D finish, Point3D* crossPoint) {
+        assert(!areEqual(start, finish));
+        
         Point3D guide = finish - start;
         
         Point3D norm = getNormal(); // Normal to the plane
@@ -59,11 +66,9 @@ public:
         long double e = norm * guide;
         
         if (!isZero(e)) {
-            if (isZero(d)) {
-                // line on plane
-                return true;
-            }
             if (sign(d) != sign(e)) {
+                // sign(d) == 0 mean that line on plane
+                // cross point on line but not on ray
                 return false;
             }
             
@@ -75,33 +80,45 @@ public:
         return false;
     }
     
-    virtual Point3D getNormal(const Point3D& point) {
+    void setOrientation(const Point3D& orientation) {
+        orientation_ = orientation;
+    }
+    
+    Point3D getNormal(const Point3D& point) {
         return getNormal();
     }
 protected:
     Polygon3D polygon_;
     SDL_Color color_;
+    Point3D orientation_;
     
     Point3D getNormal() {
-        return ((polygon_[1] - polygon_[0]) ^ (polygon_[2] - polygon_[0])).normalize();
+        Point3D normal = ((polygon_[1] - polygon_[0]) ^ (polygon_[2] - polygon_[0])).normalize();
+        if (sign(normal * (orientation_ - polygon_[0])) < 0) {
+            normal *= -1;
+        }
+        return normal;
     }
 };
 
 class Triangle : public Polygon {
 public:
-    Triangle(Point3D points[3], SDL_Color color) : Polygon(points, 3, color) { }
+    Triangle(Point3D points[3], Material material) : Polygon(points, 3, material) { }
     
     virtual bool intersect(Point3D start, Point3D finish, Point3D* crossPoint) {
+        assert(!areEqual(start, finish));
+        
         Point3D guide = finish - start;
         
-        Point3D norm = (polygon_[1] - polygon_[1]) ^ (polygon_[1] - polygon_[1]); // Normal to the plane
-        long double d = norm * (polygon_[1] - start);
+        Point3D norm = getNormal(); // Normal to the plane
+        long double d = norm * (polygon_[0] - start);
         long double e = norm * guide;
         
         if (!isZero(e)) {
-            if (isZero(d)) {
-                // line on plane
-                return true;
+            if (sign(d) != sign(e)) {
+                // sign(d) == 0 means that line on plane
+                // cross point on line but not on ray
+                return false;
             }
             
             // Let's find cross point then
@@ -109,9 +126,9 @@ public:
             
             // Find normals
             Point3D norm[3] = {
-                (polygon_[1] - *crossPoint) ^ (polygon_[1] - *crossPoint),
-                (polygon_[1] - *crossPoint) ^ (polygon_[1] - *crossPoint),
-                (polygon_[1] - *crossPoint) ^ (polygon_[1] - *crossPoint)
+                (polygon_[0] - *crossPoint) ^ (polygon_[1] - *crossPoint),
+                (polygon_[1] - *crossPoint) ^ (polygon_[2] - *crossPoint),
+                (polygon_[2] - *crossPoint) ^ (polygon_[0] - *crossPoint)
             };
             
             // If they have same orientation
@@ -129,7 +146,7 @@ public:
 
 class Quadrangle : public Polygon {
 public:
-    Quadrangle(Point3D points[4], SDL_Color color) : Polygon(points, 4, color) { }
+    Quadrangle(Point3D points[4], Material material) : Polygon(points, 4, material) { }
 };
 
 #endif /* objects_h */
