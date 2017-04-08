@@ -13,6 +13,7 @@
 #include <iostream>
 #include <algorithm>
 #include <SDL2/sdl.h>
+#include <assert.h>
 
 namespace Geometry {
     
@@ -71,6 +72,9 @@ namespace Geometry {
         
         long double len2() const;
         long double len()  const;
+        
+        long double get(int axis) const;
+        void set(int axis, long double k);
         
         Point3D& operator +=(const Point3D& p);
         Point3D& operator -=(const Point3D& p);
@@ -469,6 +473,35 @@ namespace Geometry {
     
     long double Point3D::len() const {
         return sqrt(len2());
+    }
+    
+    long double Point3D::get(int axis) const {
+        assert(axis >= 0);
+        assert(axis <= 3);
+        
+        switch (axis) {
+            case 0:
+                return x;
+            case 1:
+                return y;
+            case 2:
+                return z;
+        }
+        return 0;
+    }
+    
+    void Point3D::set(int axis, long double k) {
+        assert(axis >= 0);
+        assert(axis <= 3);
+        
+        switch (axis) {
+            case 0:
+                x = k;
+            case 1:
+                y = k;
+            case 2:
+                z = k;
+        }
     }
     
     Point3D Point3D::normalize() const {

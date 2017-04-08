@@ -43,6 +43,10 @@ public:
     virtual Point3D getNormal(const Point3D& point) {
         return (point - center_).normalize();
     }
+    
+    virtual BoundingBox getBoundingBox() {
+        return BoundingBox(center_ - Point3D(r_, r_, r_), center_ + Point3D(r_, r_, r_));
+    }
 private:
     Point3D center_;
     int r_;
@@ -84,15 +88,31 @@ public:
         orientation_ = orientation;
     }
     
-    Point3D getNormal(const Point3D& point) {
+    virtual Point3D getNormal(const Point3D& point) {
         return getNormal();
     }
+    
+    virtual BoundingBox getBoundingBox() {
+        Point3D low = polygon_[0], high = polygon_[0];
+        
+        for (int i = 1; i < polygon_.cnt; ++i) {
+            low.x = std::min(low.x, polygon_[i].x);
+            low.y = std::min(low.y, polygon_[i].y);
+            low.z = std::min(low.z, polygon_[i].z);
+            
+            high.x = std::max(high.x, polygon_[i].x);
+            high.y = std::max(high.y, polygon_[i].y);
+            high.z = std::max(high.z, polygon_[i].z);
+        }
+        return BoundingBox(low, high);
+    }
+    
 protected:
     Polygon3D polygon_;
     SDL_Color color_;
     Point3D orientation_;
     
-    Point3D getNormal() {
+    virtual Point3D getNormal() {
         Point3D normal = ((polygon_[1] - polygon_[0]) ^ (polygon_[2] - polygon_[0])).normalize();
         if (sign(normal * (orientation_ - polygon_[0])) < 0) {
             normal *= -1;

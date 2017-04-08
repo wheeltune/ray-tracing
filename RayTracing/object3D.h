@@ -9,11 +9,52 @@
 #ifndef Object3D_h
 #define Object3D_h
 
+#include <assert.h>
 #include <SDL2/sdl.h>
 #include <cmath>
 #include <algorithm>
 
 using namespace Geometry;
+
+class BoundingBox {
+public:
+    BoundingBox(Point3D low, Point3D high) : low_(low), high_(high) { }
+        
+    long double getLow(int axis) {
+        return low_.get(axis);
+    }
+    
+    long double getHigh(int axis) {
+        return high_.get(axis);
+    }
+    
+    long double getLength(int axis) {
+        return high_.get(axis) - low_.get(axis);
+    }
+    
+    std::pair<BoundingBox, BoundingBox> split(int axis, long double proportion) {
+        Point3D high1(high_);
+        Point3D low2(low_);
+        
+        long double axisValue = getLength(axis) * proportion + low_.get(axis);
+        high1.set(axis, axisValue);
+        low2.set(axis, axisValue);
+        
+        return std::make_pair(BoundingBox(low_, high1), BoundingBox(low2, high_));
+    }
+    
+    void expand(const BoundingBox& bBox) {
+        low_.x = std::min(low_.x, bBox.low_.x);
+        low_.y = std::min(low_.y, bBox.low_.y);
+        low_.z = std::min(low_.z, bBox.low_.z);
+        
+        high_.x = std::max(high_.x, bBox.high_.x);
+        high_.y = std::max(high_.y, bBox.high_.y);
+        high_.z = std::max(high_.z, bBox.high_.z);
+    }
+private:
+    Point3D low_, high_;
+};
 
 struct Material {
     Vec3 kAmbient;
@@ -83,12 +124,17 @@ public:
         Vec3 intensity = lightParams.getIntensity((light - point).len2(),
                                                   material_.kAmbient,
                                                   material_.kDiffuse * (l * n),
-                                                  material_.kSpecular * std::max((long double) 0, std::pow(r * v, material_.kShine)));
+                                                  material_.kSpecular * std::pow(std::max((long double) 0, r * v), material_.kShine));
         
         return intensity;
     }
+    
     virtual Point3D getNormal(const Point3D& point) {
         return Point3D(0, 0, 0);
+    }
+    
+    virtual BoundingBox getBoundingBox() {
+        return BoundingBox(Point3D(0, 0, 0), Point3D(0, 0, 0));
     }
 protected:
     Object3D(Material material) : material_(material) { }

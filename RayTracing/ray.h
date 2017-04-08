@@ -15,6 +15,7 @@
 #include <vector>
 #include "window.h"
 #include "objects.h"
+#include "kdTree.h"
 
 using namespace Geometry;
 
@@ -62,7 +63,7 @@ public:
                 for (int i = 0; i < allias; ++i) {
                     if (traceRay(origin_, rays[i], &crossObject, &crossPoint)) {
                         
-                        Vec3 lightEnergy = crossObject->getBaseIntencity(Vec3(0.9, 0.9, 0.9));
+                        Vec3 lightEnergy = crossObject->getBaseIntencity(Vec3(0.7, 0.7, 0.7));
                         
                         for (auto light : lights_) {
                             Object3D* tmpObject;

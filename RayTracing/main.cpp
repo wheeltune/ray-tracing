@@ -101,8 +101,8 @@ int main(int argc, const char * argv[]) {
                                     )
                         );
     
-    rayTracer.addLight(new DotLight(Point3D(0, -350, 250), LightParams(1000, 130000, 0)));
-    rayTracer.addLight(new DotLight(Point3D(0, -200, 600), LightParams(0, 130000, 0)));
+    rayTracer.addLight(new DotLight(Point3D(0, -350, 250), LightParams(0, 100000, 1000)));
+    rayTracer.addLight(new DotLight(Point3D(0, -350, 600), LightParams(0, 100000, 1000)));
     
     rayTracer.draw();
     
