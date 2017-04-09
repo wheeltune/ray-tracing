@@ -16,41 +16,81 @@
 
 using namespace Geometry;
 
+class Object3D;
+
 class BoundingBox {
 public:
+    BoundingBox(const std::vector<Object3D*>& objects);
     BoundingBox(Point3D low, Point3D high) : low_(low), high_(high) { }
-        
-    long double getLow(int axis) {
-        return low_.get(axis);
+    
+    Point3D low() {
+        return low_;
     }
     
-    long double getHigh(int axis) {
-        return high_.get(axis);
+    Point3D high() {
+        return high_;
     }
     
-    long double getLength(int axis) {
-        return high_.get(axis) - low_.get(axis);
+    long double low(int axis) {
+        return low_[axis];
+    }
+    
+    long double high(int axis) {
+        return high_[axis];
+    }
+    
+    long double length(int axis) {
+        return high_[axis] - low_[axis];
     }
     
     std::pair<BoundingBox, BoundingBox> split(int axis, long double proportion) {
         Point3D high1(high_);
         Point3D low2(low_);
         
-        long double axisValue = getLength(axis) * proportion + low_.get(axis);
-        high1.set(axis, axisValue);
-        low2.set(axis, axisValue);
+        long double axisValue = length(axis) * proportion + low_[axis];
+        high1[axis] = axisValue;
+        low2 [axis] = axisValue;
         
         return std::make_pair(BoundingBox(low_, high1), BoundingBox(low2, high_));
     }
     
     void expand(const BoundingBox& bBox) {
-        low_.x = std::min(low_.x, bBox.low_.x);
-        low_.y = std::min(low_.y, bBox.low_.y);
-        low_.z = std::min(low_.z, bBox.low_.z);
+        for (int axis = 0; axis < 3; ++axis) {
+            low_ [axis] = std::min(low_ [axis], bBox.low_ [axis]);
+            high_[axis] = std::max(high_[axis], bBox.high_[axis]);
+        }
+    }
+    
+    bool intersect(Point3D start, Point3D finish, Point3D* crossPoint1, Point3D* crossPoint2) {
+        Point3D guide = finish - start;
+        Point3D invGuide = 1 / guide;
         
-        high_.x = std::max(high_.x, bBox.high_.x);
-        high_.y = std::max(high_.y, bBox.high_.y);
-        high_.z = std::max(high_.z, bBox.high_.z);
+        long double toLow  = invGuide[0] * (low_ [0] - start[0]);
+        long double toHigh = invGuide[0] * (high_[0] - start[0]);
+        long double tmin = std::min(toLow, toHigh);
+        long double tmax = std::max(toLow, toHigh);
+        
+        toLow  = invGuide[1] * (low_ [1] - start[1]);
+        toHigh = invGuide[1] * (high_[1] - start[1]);
+        tmin = std::max(tmin, std::min(toLow, toHigh));
+        tmax = std::min(tmax, std::max(toLow, toHigh));
+        
+        toLow  = invGuide[2] * (low_ [2] - start[2]);
+        toHigh = invGuide[2] * (high_[2] - start[2]);
+        tmin = std::max(tmin, std::min(toLow, toHigh));
+        tmax = std::min(tmax, std::max(toLow, toHigh));
+        
+        if ((tmin <= tmax) && (tmax > 0)) {
+            if (tmin > 0) {
+                *crossPoint1 = start + guide * tmin;
+            } else {
+                *crossPoint1 = start;
+            }
+            *crossPoint2 = start + guide * tmax;
+            
+            return true;
+        }
+        return false;
     }
 private:
     Point3D low_, high_;
@@ -142,5 +182,18 @@ protected:
 private:
     Material material_;
 };
+
+
+BoundingBox::BoundingBox(const std::vector<Object3D*>& objects)  {
+    assert(objects.size() != 0);
+    assert(objects[0] != NULL);
+    
+    *this = objects[0]->getBoundingBox();
+    for (int i = 1; i < objects.size(); ++i) {
+        assert(objects[i] != NULL);
+        
+        this->expand(objects[i]->getBoundingBox());
+    }
+}
 
 #endif /* Object3D_h */

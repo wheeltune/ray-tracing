@@ -68,13 +68,14 @@ namespace Geometry {
         Point3D() {}
         Point3D(long double x, long double y, long double z);
         
-        Point3D normalize() const;
+        Point3D getNormalized() const;
+        Point3D& normalize();
         
         long double len2() const;
         long double len()  const;
         
-        long double get(int axis) const;
-        void set(int axis, long double k);
+        long double& operator[] (int axis);
+        const long double operator[] (int axis) const;
         
         Point3D& operator +=(const Point3D& p);
         Point3D& operator -=(const Point3D& p);
@@ -308,6 +309,10 @@ namespace Geometry {
         return p /= a;
     }
     
+    Point3D operator /(long double a, const Point3D& p) {
+        return Point3D(a / p.x, a / p.y, a / p.z);
+    }
+    
     Point3D Point3D::operator -() {
         return Point3D(*this) * (-1);
     }
@@ -475,43 +480,44 @@ namespace Geometry {
         return sqrt(len2());
     }
     
-    long double Point3D::get(int axis) const {
+    const long double Point3D::operator[](int axis) const {
         assert(axis >= 0);
         assert(axis <= 3);
         
-        switch (axis) {
-            case 0:
-                return x;
-            case 1:
-                return y;
-            case 2:
-                return z;
+        if (axis == 0) {
+            return x;
+        } else if (axis == 1) {
+            return y;
+        } else {
+            return z;
         }
-        return 0;
     }
     
-    void Point3D::set(int axis, long double k) {
+    long double& Point3D::operator[](int axis) {
         assert(axis >= 0);
         assert(axis <= 3);
         
-        switch (axis) {
-            case 0:
-                x = k;
-            case 1:
-                y = k;
-            case 2:
-                z = k;
+        if (axis == 0) {
+            return x;
+        } else if (axis == 1) {
+            return y;
+        } else {
+            return z;
         }
     }
     
-    Point3D Point3D::normalize() const {
+    Point3D Point3D::getNormalized() const {
         Point3D n = Point3D(*this);
         return n / n.len();
     }
     
+    Point3D& Point3D::normalize() {
+        return (*this) /= this->len();
+    }
+    
     Point3D reflect(Point3D v1, Point3D v2) {
-        v1 = v1.normalize();
-        v2 = v2.normalize();
+        v1 = v1.getNormalized();
+        v2 = v2.getNormalized();
         return 2 * v1 * (v1 * v2) - v2;
     }
 }

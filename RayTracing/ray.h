@@ -48,6 +48,8 @@ public:
     }
     
     void draw() {
+        kdTree = new KDNode(objects_);
+        kdTree->build();
         window_.begin();
         
         int allias = 1;
@@ -91,19 +93,64 @@ public:
     bool traceRay(const Point3D& start, const Point3D& finish,
                   Object3D** crossObject, Point3D* crossPoint)
     {
-        *crossObject = NULL;
-        Point3D tmpPoint;
+        assert(crossObject != NULL);
         
-        for (int i = 0; i < objects_.size(); ++i) {
-            if (objects_[i]->intersect(start, finish, &tmpPoint) &&
-                (*crossObject == NULL || (tmpPoint - start).len2() < (*crossPoint - start).len2()))
-            {
-                if (crossObject != NULL) {
-                    *crossObject = objects_[i];
-                    *crossPoint = tmpPoint;
+        *crossObject = NULL;
+        
+        std::vector<std::pair<KDNode*, Point3D>> stack;
+        KDNode* currentNode = kdTree;
+        Point3D near, far;
+        if (kdTree->intersect(start, finish, &near, &far)) {
+            
+            while (*crossObject == NULL) {
+                if (currentNode->isLeaf()) {
+                    Point3D tmpPoint;
+                    for (int i = 0; i < currentNode->objects_.size(); ++i) {
+                        if (currentNode->objects_[i]->intersect(start, finish, &tmpPoint) &&
+                            (*crossObject == NULL || (tmpPoint - start).len2() < (*crossPoint - start).len2()))
+                        {
+                            *crossObject = currentNode->objects_[i];
+                            *crossPoint = tmpPoint;
+                        }
+                    }
+                    
+                    if (!stack.empty()) {
+                        currentNode = stack.back().first;
+                        near = far;
+                        far = stack.back().second;
+                        
+                        stack.pop_back();
+                    } else {
+                        
+                        break;
+                    }
+                } else {
+                    int axis = currentNode->getSplitAxis();
+                    int coord = currentNode->getSplitCoord();
+                    
+                    KDNode* farNode  = (far [axis] < coord) ? kdTree->left_ : kdTree->right_;
+                    KDNode* nearNode = (near[axis] < coord) ? kdTree->left_ : kdTree->right_;
+                    
+                    
+                    if (nearNode != farNode) {
+                        stack.push_back(std::make_pair(farNode, far));
+                        far = near + ((far - near) * std::fabs(coord - near[axis])) / std::fabs(far[axis] - near[axis]);
+                    }
+                    currentNode = nearNode;
                 }
             }
         }
+//        Point3D tmpPoint;
+//        for (int i = 0; i < objects_.size(); ++i) {
+//            if (objects_[i]->intersect(start, finish, &tmpPoint) &&
+//                (*crossObject == NULL || (tmpPoint - start).len2() < (*crossPoint - start).len2()))
+//            {
+//                if (crossObject != NULL) {
+//                    *crossObject = objects_[i];
+//                    *crossPoint = tmpPoint;
+//                }
+//            }
+//        }
         
         return *crossObject != NULL;
     }
@@ -124,6 +171,7 @@ public:
 private:
     Point3D origin_;
     Window window_;
+    KDNode* kdTree;
     
     std::vector<Object3D*> objects_;
     std::vector<DotLight*> lights_;

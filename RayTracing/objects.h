@@ -20,7 +20,7 @@ public:
     Sphere(Point3D center, int r, Material material) : Object3D(material), center_(center), r_(r) { }
     
     virtual bool intersect(Point3D start, Point3D finish, Point3D* crossPoint) {
-        Point3D guide = finish - start;
+        Point3D guide = (finish - start).normalize();
         
         long double d2 = ((start - center_) ^ guide).len2() / guide.len2();
         if (d2 > r_ * r_) {
@@ -28,13 +28,13 @@ public:
         }
         
         if (isOnLine(center_, start, finish)) {
-            *crossPoint = center_ - r_ * guide.normalize();
+            *crossPoint = center_ - r_ * guide;
         } else {
             Point3D t = (center_ - start) ^ guide;
             Point3D n = t ^ guide;
             n = n.normalize() * sqrt(d2);
             
-            *crossPoint = center_ + n - guide.normalize() * sqrt(r_ * r_ - d2);
+            *crossPoint = center_ + n - guide * sqrt(r_ * r_ - d2);
         }
         
         return true;
