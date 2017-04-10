@@ -21,17 +21,20 @@ using namespace Geometry;
 
 class RayTracer {
 public:
+    RayTracer(std::istream stream) {
+        
+    }
+    RayTracer(Point3D origin, Window window) : origin_(origin), window_(window) { }
+    
     ~RayTracer() {
         objects_.clear();
     }
-    
-    RayTracer(Point3D origin, Window window) : origin_(origin), window_(window) { }
     
     void addObject(Object3D* object) {
         objects_.push_back(object);
     }
     
-    void addLight(DotLight* light) {
+    void addLight(Light* light) {
         lights_.push_back(light);
     }
     
@@ -65,14 +68,14 @@ public:
                 for (int i = 0; i < allias; ++i) {
                     if (traceRay(origin_, rays[i], &crossObject, &crossPoint)) {
                         
-                        Vec3 lightEnergy = crossObject->getBaseIntencity(Vec3(0.7, 0.7, 0.7));
+                        Vec3 lightEnergy = crossObject->baseIntencity(Vec3(0.7, 0.7, 0.7));
                         
                         for (auto light : lights_) {
                             Object3D* tmpObject;
                             Point3D tmpPoint;
-                            if (traceRay(light->getPosition(), crossPoint, &tmpObject, &tmpPoint)) {
+                            if (traceRay(light->position(), crossPoint, &tmpObject, &tmpPoint)) {
                                 if (areEqual(crossPoint, tmpPoint)) {
-                                    lightEnergy += crossObject->getLightIntencity(crossPoint, origin_, light->getPosition(), *light);;
+                                    lightEnergy += light->intencityAt(crossPoint, *crossObject, origin_);
                                 }
                             }
                         }
@@ -107,6 +110,7 @@ public:
                     Point3D tmpPoint;
                     for (int i = 0; i < currentNode->objects_.size(); ++i) {
                         if (currentNode->objects_[i]->intersect(start, finish, &tmpPoint) &&
+                            currentNode->contains(tmpPoint) &&
                             (*crossObject == NULL || (tmpPoint - start).len2() < (*crossPoint - start).len2()))
                         {
                             *crossObject = currentNode->objects_[i];
@@ -114,23 +118,21 @@ public:
                         }
                     }
                     
-                    if (!stack.empty()) {
-                        currentNode = stack.back().first;
-                        near = far;
-                        far = stack.back().second;
-                        
-                        stack.pop_back();
-                    } else {
-                        
+                    if (*crossObject != NULL || stack.empty()) {
                         break;
                     }
+                    
+                    currentNode = stack.back().first;
+                    near = far;
+                    far = stack.back().second;
+                    
+                    stack.pop_back();
                 } else {
                     int axis = currentNode->getSplitAxis();
-                    int coord = currentNode->getSplitCoord();
+                    long double coord = currentNode->getSplitCoord();
                     
-                    KDNode* farNode  = (far [axis] < coord) ? kdTree->left_ : kdTree->right_;
-                    KDNode* nearNode = (near[axis] < coord) ? kdTree->left_ : kdTree->right_;
-                    
+                    KDNode* farNode  = (far [axis] < coord) ? currentNode->left_ : currentNode->right_;
+                    KDNode* nearNode = (near[axis] < coord) ? currentNode->left_ : currentNode->right_;
                     
                     if (nearNode != farNode) {
                         stack.push_back(std::make_pair(farNode, far));
@@ -140,17 +142,6 @@ public:
                 }
             }
         }
-//        Point3D tmpPoint;
-//        for (int i = 0; i < objects_.size(); ++i) {
-//            if (objects_[i]->intersect(start, finish, &tmpPoint) &&
-//                (*crossObject == NULL || (tmpPoint - start).len2() < (*crossPoint - start).len2()))
-//            {
-//                if (crossObject != NULL) {
-//                    *crossObject = objects_[i];
-//                    *crossPoint = tmpPoint;
-//                }
-//            }
-//        }
         
         return *crossObject != NULL;
     }
@@ -174,7 +165,7 @@ private:
     KDNode* kdTree;
     
     std::vector<Object3D*> objects_;
-    std::vector<DotLight*> lights_;
+    std::vector<Light*> lights_;
 };
 
 #endif /* scene_h */

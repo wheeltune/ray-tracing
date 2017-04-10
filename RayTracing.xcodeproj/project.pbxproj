@@ -31,9 +31,20 @@
 		1B3268271E718E4500B24725 /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = ../../../../../../../../Library/Frameworks/SDL2.framework; sourceTree = "<group>"; };
 		1B3268291E729B0000B24725 /* ray.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ray.h; sourceTree = "<group>"; };
 		1B32682A1E729C4A00B24725 /* window.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = window.h; sourceTree = "<group>"; };
-		1B32682B1E72BB1A00B24725 /* object3D.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = object3D.h; sourceTree = "<group>"; };
-		1B32682C1E72BB4100B24725 /* objects.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = objects.h; sourceTree = "<group>"; };
+		1B32682B1E72BB1A00B24725 /* object3d.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = object3d.h; sourceTree = "<group>"; };
 		1B32682D1E72BD2500B24725 /* geometry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = geometry.h; sourceTree = "<group>"; };
+		1B3F6B9A1E9AF2F400F6A467 /* vec3.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = vec3.h; sourceTree = "<group>"; };
+		1B3F6B9B1E9AF32900F6A467 /* geometry_constants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = geometry_constants.h; sourceTree = "<group>"; };
+		1B3F6B9C1E9AF3A000F6A467 /* point3d.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = point3d.h; sourceTree = "<group>"; };
+		1B3F6B9D1E9AF40700F6A467 /* sphere3d.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = sphere3d.h; sourceTree = "<group>"; };
+		1B3F6B9E1E9AF43F00F6A467 /* polygon3d.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = polygon3d.h; sourceTree = "<group>"; };
+		1B3F6B9F1E9AF4D800F6A467 /* geometry_functions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = geometry_functions.h; sourceTree = "<group>"; };
+		1B3F6BA11E9AF8CA00F6A467 /* light.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = light.h; sourceTree = "<group>"; };
+		1B3F6BA21E9AF8D600F6A467 /* material.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = material.h; sourceTree = "<group>"; };
+		1B3F6BA31E9B009700F6A467 /* light_params.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = light_params.h; sourceTree = "<group>"; };
+		1B3F6BA41E9B01C800F6A467 /* objects_samples.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = objects_samples.h; sourceTree = "<group>"; };
+		1B3F6BA61E9B06ED00F6A467 /* objects.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = objects.h; sourceTree = "<group>"; };
+		1B3F6BA71E9B808300F6A467 /* scene.rt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = scene.rt; sourceTree = "<group>"; };
 		1B4DA5211E941C560032FF9B /* kdTree.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = kdTree.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -70,13 +81,13 @@
 		1B32681C1E718DF900B24725 /* RayTracing */ = {
 			isa = PBXGroup;
 			children = (
-				1B32681D1E718DF900B24725 /* main.cpp */,
+				1B3F6BA01E9AF8AB00F6A467 /* Objects */,
+				1B3F6B991E9AF2C500F6A467 /* Geometry */,
+				1B4DA5211E941C560032FF9B /* kdTree.h */,
 				1B3268291E729B0000B24725 /* ray.h */,
 				1B32682A1E729C4A00B24725 /* window.h */,
-				1B32682B1E72BB1A00B24725 /* object3D.h */,
-				1B32682C1E72BB4100B24725 /* objects.h */,
-				1B32682D1E72BD2500B24725 /* geometry.h */,
-				1B4DA5211E941C560032FF9B /* kdTree.h */,
+				1B32681D1E718DF900B24725 /* main.cpp */,
+				1B3F6BA71E9B808300F6A467 /* scene.rt */,
 			);
 			path = RayTracing;
 			sourceTree = "<group>";
@@ -88,6 +99,33 @@
 				1B3268251E718E2500B24725 /* OpenGL.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		1B3F6B991E9AF2C500F6A467 /* Geometry */ = {
+			isa = PBXGroup;
+			children = (
+				1B32682D1E72BD2500B24725 /* geometry.h */,
+				1B3F6B9B1E9AF32900F6A467 /* geometry_constants.h */,
+				1B3F6B9F1E9AF4D800F6A467 /* geometry_functions.h */,
+				1B3F6B9A1E9AF2F400F6A467 /* vec3.h */,
+				1B3F6B9C1E9AF3A000F6A467 /* point3d.h */,
+				1B3F6B9D1E9AF40700F6A467 /* sphere3d.h */,
+				1B3F6B9E1E9AF43F00F6A467 /* polygon3d.h */,
+			);
+			name = Geometry;
+			sourceTree = "<group>";
+		};
+		1B3F6BA01E9AF8AB00F6A467 /* Objects */ = {
+			isa = PBXGroup;
+			children = (
+				1B3F6BA61E9B06ED00F6A467 /* objects.h */,
+				1B32682B1E72BB1A00B24725 /* object3d.h */,
+				1B3F6BA21E9AF8D600F6A467 /* material.h */,
+				1B3F6BA31E9B009700F6A467 /* light_params.h */,
+				1B3F6BA11E9AF8CA00F6A467 /* light.h */,
+				1B3F6BA41E9B01C800F6A467 /* objects_samples.h */,
+			);
+			name = Objects;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

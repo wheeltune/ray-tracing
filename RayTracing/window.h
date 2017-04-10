@@ -16,6 +16,7 @@ using namespace Geometry;
 
 class Window {
 public:
+    Window() { }
     Window(
            Point3D leftTop,
            Point3D rightTop,

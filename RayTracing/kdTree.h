@@ -9,7 +9,7 @@
 #ifndef kdTree_h
 #define kdTree_h
 
-#include "object3D.h"
+#include "objects.h"
 
 const long double C_I = 1;
 const long double C_T = 4;
@@ -30,11 +30,9 @@ public:
         if (objects_.size() < 2) return;
 
         long double minSah = C_I * objects_.size();
-        long double tmpSah = minSah;
+
         int minAxis = -1;
         long double minProp = 0.0;
-        
-        std::vector<long double> tmpSahs;
         
         for (int axis = 0; axis < 3; ++axis) {
             std::vector<int> low(cnt, 0), high(cnt, 0);
@@ -42,12 +40,12 @@ public:
             for (auto obj : objects_) {
                 int ind;
                 
-                ind = (int)((obj->getBoundingBox().low(axis) - bBox_.low(axis)) / bBox_.length(axis) * cnt);
+                ind = (int)((obj->boundingBox().low(axis) - bBox_.low(axis)) / bBox_.length(axis) * cnt);
                 ind = std::min(std::max(0, ind), cnt - 1);
 
                 low[ind]++;
                 
-                ind = (int)((obj->getBoundingBox().high(axis) - bBox_.low(axis)) / (bBox_.length(axis)) * cnt);
+                ind = (int)((obj->boundingBox().high(axis) - bBox_.low(axis)) / (bBox_.length(axis)) * cnt);
                 ind = std::min(std::max(0, ind), cnt - 1);
                 
                 high[ind]++;
@@ -73,7 +71,7 @@ public:
                 int cntLeft = (int) objects_.size() - low[i + 1];
                 int cntRight = (int) objects_.size() - high[i];
                 long double sah = C_T + C_I * (sLeft * cntLeft + sRight * cntRight) / sParent;
-                tmpSahs.push_back(sah);
+
                 if (sah < minSah) {
                     minSah = sah;
                     minAxis = axis;
@@ -88,13 +86,15 @@ public:
             long double splitCoord = bBoxes.first.high(minAxis);
             
             for (int i = 0; i < objects_.size(); ++i) {
-                if ((objects_[i]->getBoundingBox().low(minAxis) < splitCoord)) {
+                if ((objects_[i]->boundingBox().low(minAxis) < splitCoord + EPS)) {
                     leftObjects.push_back(objects_[i]);
                 }
-                if ((objects_[i]->getBoundingBox().high(minAxis) > splitCoord)) {
+                if ((objects_[i]->boundingBox().high(minAxis) > splitCoord - EPS)) {
                     rightObjects.push_back(objects_[i]);
                 }
             }
+            
+            objects_.clear();
                         
             left_ = new KDNode(bBoxes.first, leftObjects);
             right_ = new KDNode(bBoxes.second, rightObjects);
@@ -124,6 +124,10 @@ public:
         } else {
             return 0;
         }
+    }
+    
+    bool contains(const Point3D& p) {
+        return bBox_.contains(p);
     }
 
     BoundingBox bBox_;

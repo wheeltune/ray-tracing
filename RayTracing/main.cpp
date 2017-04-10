@@ -11,10 +11,16 @@
 #include <OpenGL/gl3.h>
 #include "ray.h"
 #include "geometry.h"
+#include "objects.h"
 
 using namespace Geometry;
 
 int main(int argc, const char * argv[]) {
+    
+    int a = 20;
+    int& b = a;
+    a = 10;
+    std::cout << b;
     
     RayTracer rayTracer(
                         Point3D(0, 0, -500),
@@ -43,7 +49,7 @@ int main(int argc, const char * argv[]) {
                                    Material(Vec3(1, 0.55, 0), Vec3(0.5, 0.5, 0.5), Vec3(1, 1, 1), 1)
                                    )
                         );
-    
+
     rayTracer.addObject(new Sphere(
                                    Point3D(-100, 0, 500),
                                    100,
@@ -92,7 +98,7 @@ int main(int argc, const char * argv[]) {
                         );
     rayTracer.addObject(new Quadrangle(
                                     (Point3D[4]){ Point3D(-500, -400, 0), Point3D(-500, -400, 1000), Point3D(500, -400, 1000), Point3D(500, -400, 0) },
-                                    Material(Vec3(0.95, 0.94, 0.94), Vec3(0.01, 0.01, 0.01), Vec3(1, 1, 1))
+                                    Material(Vec3(0.99, 0.99, 0.99), Vec3(0.01, 0.01, 0.01), Vec3(1, 1, 1))
                                     )
                         );
     rayTracer.addObject(new Quadrangle(
@@ -101,8 +107,8 @@ int main(int argc, const char * argv[]) {
                                     )
                         );
     
-    rayTracer.addLight(new DotLight(Point3D(0, -350, 250), LightParams(0, 100000, 1000)));
-    rayTracer.addLight(new DotLight(Point3D(0, -350, 600), LightParams(0, 100000, 1000)));
+    rayTracer.addLight(new Light(Point3D(0, -350, 250), LightParams(0, 100000, 1000)));
+    rayTracer.addLight(new Light(Point3D(0, -350, 600), LightParams(0, 100000, 1000)));
     
     rayTracer.draw();
     

@@ -6,19 +6,27 @@
          contextName = "Geometry::isPointInPolygon(Geometry::Point3D const&amp;, Geometry::Polygon3D const&amp;):geometry.h">
          <PersistentStrings>
             <PersistentString
-               value = "polygon.points+3">
+               value = "crossCnt">
             </PersistentString>
             <PersistentString
                value = "polygon.points+1">
             </PersistentString>
             <PersistentString
-               value = "crossCnt">
+               value = "polygon.points+3">
             </PersistentString>
             <PersistentString
                value = "polygon.points">
             </PersistentString>
             <PersistentString
                value = "polygon.points+2">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "RayTracer::draw():ray.h">
+         <PersistentStrings>
+            <PersistentString
+               value = "kdTree">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
